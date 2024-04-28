@@ -8,12 +8,14 @@ function Home() {
   const [workflowData, setWorkflowData] = useState([]);
   const [currentId, setCurrentId] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (val) => {
     setCurrentId(val);
   };
 
   const handleRun = () => {
+    setIsLoading(true);
     console.log(uploadedFiles[0]);
     const formData = new FormData();
     formData.append("file", uploadedFiles[0]);
@@ -24,21 +26,28 @@ function Home() {
       url: "https://workflow-builder-backend.vercel.app/api/upload",
       data: formData,
       headers: { "Content-Type": "multipart/form-data" },
-    }).then((res) => {
-      console.log(res);
-      message.open({
-        type: "success",
-        content: (
-          <p>
-            Triggered workflow successfully. Visit{" "}
-            <a href="https://workflowcsv.requestcatcher.com/" target="blank">
-              https://workflowcsv.requestcatcher.com/
-            </a>{" "}
-            if sent post request to request catcher and re-run.
-          </p>
-        ),
+    })
+      .then((res) => {
+        console.log(res);
+        message.open({
+          type: "success",
+          content: (
+            <p>
+              Triggered workflow successfully. Visit{" "}
+              <a href="https://workflowcsv.requestcatcher.com/" target="blank">
+                https://workflowcsv.requestcatcher.com/
+              </a>{" "}
+              if sent post request to request catcher and re-run.
+            </p>
+          ),
+        });
+      })
+      .catch((err) => {
+        message.error(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-    });
   };
   useEffect(() => {
     axios
@@ -76,6 +85,7 @@ function Home() {
         type="primary"
         disabled={!currentId || uploadedFiles.length === 0}
         onClick={handleRun}
+        loading={isLoading}
       >
         Run Workflow
       </Button>

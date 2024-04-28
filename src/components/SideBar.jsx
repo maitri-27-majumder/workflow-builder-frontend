@@ -3,6 +3,7 @@ import { Button, message } from "antd";
 import axios from "axios";
 
 const SideBar = ({ nodes, edges }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData("application/reactflow", nodeType);
     event.dataTransfer.effectAllowed = "move";
@@ -18,6 +19,7 @@ const SideBar = ({ nodes, edges }) => {
   }
 
   const handleSave = () => {
+    setIsLoading(true);
     const modifiedNodes = nodes.reduce((acc, node) => {
       return { ...acc, [node.id]: node.type };
     }, {});
@@ -30,13 +32,20 @@ const SideBar = ({ nodes, edges }) => {
       steps: steps,
     };
     axios
-      .post("https://workflow-builder-backend.vercel.app/api/workflows", payload)
+      .post(
+        "https://workflow-builder-backend.vercel.app/api/workflows",
+        payload
+      )
       .then((res) => {
         console.log(res);
         message.success("Workflow successfully created");
         randomStr(9, "12345ab");
-      }).catch((err) => {
+      })
+      .catch((err) => {
         message.error(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -48,7 +57,12 @@ const SideBar = ({ nodes, edges }) => {
     <aside>
       <div style={{ marginBottom: "4px" }}>Workflow Id : {workflowId}</div>
       <div className="description">
-        <Button type="primary" style={{ width: "100%" }} onClick={handleSave}>
+        <Button
+          type="primary"
+          style={{ width: "100%" }}
+          onClick={handleSave}
+          loading={isLoading}
+        >
           Save
         </Button>
       </div>
