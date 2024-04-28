@@ -1,0 +1,27 @@
+.wrapper {
+  padding: 80px;
+  background-color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.content-container {
+  border: 1px solid rgb(67, 67, 67);
+  border-radius: 12px 12px;
+  background-color: #ffffff;
+}
+
+.body {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  background-color: #d2d2d2;
+}
+
+.dropdown-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
